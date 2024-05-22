@@ -4,62 +4,19 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
-	"strconv"
 
 	pb "go-grpc-microservice-hashicorp/gen"
-
-	capi "github.com/hashicorp/consul/api"
 
 	"github.com/labstack/echo/v4"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func getPort() (port string) {
-	port = os.Getenv("PORT")
-	if len(port) == 0 {
-		port = "8080"
-	}
-	port = ":" + port
-	return
-}
-
-func getHostname() (hostname string) {
-	hostname, _ = os.Hostname()
-	return
-}
-
 func main() {
-	// TODO: Read the server address from the environment variable or a configuration file
-	consulConfig := capi.DefaultConfig()
-	consulConfig.Address = "consul:8500"
-	consul, _ := capi.NewClient(consulConfig)
+	InitConsul()
+	RegisterInventoryService()
+	RegisterOrderService()
 
-
-	serviceId := "order"
-	port, _ := strconv.Atoi(getPort()[1:len(getPort())])
-	fmt.Println(port)
-	address := getHostname()
-	fmt.Println(address)
-
-	registration := &capi.AgentServiceRegistration{
-		ID:      serviceId,
-		Name:   serviceId,
-		Address: address,
-		Port:   port,
-		Check: &capi.AgentServiceCheck{
-			HTTP:     fmt.Sprintf("http://%s:%d/check", address, port),
-			Interval: "10s",
-		},
-	}
-
-	regError := consul.Agent().ServiceRegister(registration)
-	if regError != nil {
-		fmt.Println(regError)
-	}
-
-	// FIXME: Replace with your own server address
 	serverAddr := "dns:///inventory:50051"
 
 	opts := []grpc.DialOption{
