@@ -1,0 +1,38 @@
+services:
+  inventory:
+    container_name: inventory
+    build:
+      context: .
+      dockerfile: apps/inventory/Dockerfile
+    ports:
+      - "50051:50051"
+    # depends_on:
+    # - consul
+    # environment:
+    # - CONSUL_HTTP_ADDR=consul:8500
+    networks:
+      - go_grpc_microservice_hashicorp
+  order:
+    container_name: order
+    build:
+      context: .
+      dockerfile: apps/order/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - inventory
+      # - consul
+    # environment:
+    # - CONSUL_HTTP_ADDR=consul:8500
+    networks:
+      - go_grpc_microservice_hashicorp
+  # consul:
+  #   image: hashicorp/consul:latest
+  #   command: agent -dev -client=0.0.0.0
+  #   ports:
+  #     - "8500:8500"
+  #   networks:
+  #     - go_grpc_microservice_hashicorp
+networks:
+  go_grpc_microservice_hashicorp:
+    driver: bridge

@@ -13,7 +13,10 @@ import (
 )
 
 func main() {
-	serverAddr := "localhost:50051"
+	// TODO: Read the server address from the environment variable or a configuration file
+
+	// FIXME: Replace with your own server address
+	serverAddr := "dns:///inventory:50051"
 
 	opts := [] grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
