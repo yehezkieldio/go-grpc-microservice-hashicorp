@@ -1,0 +1,23 @@
+{
+  "name": "@go-grpc-microservice-hashicorp/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "buf:init": "buf config init",
+    "buf:generate": "buf generate proto",
+    "buf:lint": "buf lint",
+    "buf:format": "buf format -w",
+    "buf:update": "buf dep update"
+  },
+  "private": true,
+  "dependencies": {
+    "@nx-go/nx-go": "3.0.0"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "^1.32.1",
+    "@bufbuild/protobuf": "^1.9.0",
+    "@nx/workspace": "19.0.5",
+    "nx": "19.0.5"
+  },
+  "packageManager": "pnpm@8.15.4+sha1.c85a4305534f76d461407b59277b954bac97b5c4"
+}
