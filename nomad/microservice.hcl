@@ -15,7 +15,7 @@ job "microservices" {
                 port = "grpc"
             }
             config {
-                image = "ghcr.io/yehezkieldio/inventory"
+                image = "ghcr.io/yehezkieldio/go-grpc-microservice-hashicorp/ggmh-inventory"
                 command = "/app/inventory"
                 ports = ["grpc"]
             }
