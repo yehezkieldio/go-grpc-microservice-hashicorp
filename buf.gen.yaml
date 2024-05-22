@@ -1,9 +1,6 @@
 version: v2
 managed:
   enabled: true
-  override:
-    - file_option: go_package_prefix
-      value: github.com/yehezkieldio/go-grpc-microservice-hashicorp/gen
 plugins:
   - remote: buf.build/grpc/go
     out: libs/gen

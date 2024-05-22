@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"strconv"
 
 	capi "github.com/hashicorp/consul/api"
 )
@@ -19,10 +21,21 @@ func getHostname() (hostname string) {
 	return
 }
 
+func getPort() (port string) {
+ port = os.Getenv("PORT")
+ if len(port) == 0 {
+  port = "8080"
+ }
+ port = ":" + port
+ return
+}
+
 func RegisterOrderService() {
 	serviceId := "order"
-	port := 50051
+	port, _ := strconv.Atoi(getPort()[1:len(getPort())])
 	address := getHostname()
+
+	fmt.Printf("Registering order service with address: %s and port: %d\n", address, port)
 
 	registration := &capi.AgentServiceRegistration{
 		ID:      serviceId,
@@ -30,21 +43,26 @@ func RegisterOrderService() {
 		Address: address,
 		Port:    port,
 		Check: &capi.AgentServiceCheck{
-			HTTP:     "http://" + address + ":" + string(rune(port)) + "/check",
+			HTTP:     fmt.Sprintf("http://%s:%d/check", address, port),
 			Interval: "10s",
 		},
 	}
 
 	registrationError := Consul.Agent().ServiceRegister(registration)
 	if registrationError != nil {
+		fmt.Println("Error registering service with consul")
 		panic(registrationError)
 	}
+
+	fmt.Printf("Registered order service with ID: %s\n", serviceId)
 }
 
 func RegisterInventoryService() {
 	serviceId := "inventory"
 	port := 50051
-	address := getHostname()
+	address := "inventory"
+
+	fmt.Printf("Registering inventory service with address: %s and port: %d\n", address, port)
 
 	registration := &capi.AgentServiceRegistration{
 		ID:      serviceId,
@@ -52,14 +70,16 @@ func RegisterInventoryService() {
 		Address: address,
 		Port:    port,
 		Check: &capi.AgentServiceCheck{
-			GRPC:       address + ":" + string(rune(port)),
-			GRPCUseTLS: false,
+			GRPC: "inventory:50051",
 			Interval:   "10s",
 		},
 	}
 
 	registrationError := Consul.Agent().ServiceRegister(registration)
 	if registrationError != nil {
+		fmt.Println("Error registering service with consul")
 		panic(registrationError)
 	}
+
+	fmt.Printf("Registered inventory service with ID: %s\n", serviceId)
 }

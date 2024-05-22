@@ -7,7 +7,20 @@
     "buf:generate": "buf generate proto",
     "buf:lint": "buf lint",
     "buf:format": "buf format -w",
-    "buf:update": "buf dep update"
+    "buf:update": "buf dep update",
+    "compose-build": "docker-compose build",
+    "compose-up": "docker-compose up -d",
+    "compose-down": "docker-compose down"
+  },
+  "nx": {
+    "targets": {
+      "compose-build": {
+        "dependsOn": [
+          "inventory:build",
+          "order:build"
+        ]
+      }
+    }
   },
   "private": true,
   "dependencies": {

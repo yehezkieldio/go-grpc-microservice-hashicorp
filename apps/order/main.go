@@ -14,14 +14,15 @@ import (
 
 func main() {
 	InitConsul()
-	RegisterInventoryService()
-	RegisterOrderService()
 
 	serverAddr := "dns:///inventory:50051"
 
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
+
+	RegisterInventoryService()
+	RegisterOrderService()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

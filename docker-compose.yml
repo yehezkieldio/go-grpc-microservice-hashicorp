@@ -1,4 +1,17 @@
 services:
+  consul:
+    container_name: consul
+    image: hashicorp/consul:latest
+    command: agent -dev -client=0.0.0.0
+    ports:
+      - "8500:8500"
+    networks:
+      - go_grpc_microservice_hashicorp
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8500/v1/status/leader"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
   inventory:
     container_name: inventory
     build:
@@ -7,7 +20,8 @@ services:
     ports:
       - "50051:50051"
     depends_on:
-      - consul
+      consul:
+        condition: service_healthy
     environment:
       - CONSUL_HTTP_ADDR=consul:8500
     networks:
@@ -20,18 +34,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - consul
-      - inventory
+      consul:
+        condition: service_healthy
     environment:
       - CONSUL_HTTP_ADDR=consul:8500
-    networks:
-      - go_grpc_microservice_hashicorp
-  consul:
-    container_name: consul
-    image: hashicorp/consul:latest
-    command: agent -dev -client=0.0.0.0
-    ports:
-      - "8500:8500"
     networks:
       - go_grpc_microservice_hashicorp
 networks:
