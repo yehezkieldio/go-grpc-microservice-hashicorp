@@ -12,6 +12,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "^1.22.3"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21.1.0
+          cache: "pnpm"
+      - name: Install Node.js dependencies
+        run: pnpm install
+      - name: Install Go dependencies on each module
+        run: |
+          cd apps/inventory
+          go mod download
+          cd ../order
+          go mod download
+      - name: Build Go applications
+        run: |
+          pnpm nx run inventory:build
+          pnpm nx run order:build
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
