@@ -9,6 +9,9 @@ jobs:
   build:
     name: Build and push
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -45,7 +48,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/inventory:latest -f apps/inventory/Dockerfile .
-          docker push ghcr.io/${{ github.repository }}/inventory:latest
-          docker build -t ghcr.io/${{ github.repository }}/order:latest -f apps/order/Dockerfile .
-          docker push ghcr.io/${{ github.repository }}/order:latest
+          docker build -t ghcr.io/${{ github.repository }}/ggmh-inventory:latest -f apps/inventory/Dockerfile .
+          docker push ghcr.io/${{ github.repository }}/ggmh-inventory:latest
+          docker build -t ghcr.io/${{ github.repository }}/ggmh-order:latest -f apps/order/Dockerfile .
+          docker push ghcr.io/${{ github.repository }}/ggmh-order:latest
